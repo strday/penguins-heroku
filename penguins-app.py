@@ -23,11 +23,13 @@ uploaded_file = st.sidebar.file_uploader("Upload your input CSV file", type=["cs
 if uploaded_file is not None:
     input_df = pd.read_csv(uploaded_file)
 else:
-    def user_input_features():
+    def user_input_features():        
+        island = 'Biscoe'
         sex = st.sidebar.selectbox('Sex',('male','female'))
         bill_length_mm = st.sidebar.slider('Payment Rate (USD)', 30,60,40)
         bill_depth_mm = st.sidebar.slider('Extra Source 1 (USD)', 10,20,15)
         flipper_length_mm = st.sidebar.slider('Extra Source 1 (USD)', 150,250,200)
+        body_mass_g = 4207.0
         data = {'island': island,
                 'bill_length_mm': bill_length_mm,
                 'bill_depth_mm': bill_depth_mm,
