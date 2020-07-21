@@ -14,10 +14,6 @@ Data obtained from the [Kaggle] (https://www.kaggle.com/c/home-credit-default-ri
 
 st.sidebar.header('User Input Features')
 
-st.sidebar.markdown("""
-[Example CSV input file](https://raw.githubusercontent.com/strday/penguins-heroku/master/penguins_example.csv)
-""")
-
 # Collects user input features into dataframe
 uploaded_file = st.sidebar.file_uploader("Upload your input CSV file", type=["csv"])
 if uploaded_file is not None:
@@ -28,7 +24,7 @@ else:
         sex = st.sidebar.selectbox('Sex',('male','female'))
         bill_length_mm = st.sidebar.slider('Payment Rate (USD)', 30,60,40)
         bill_depth_mm = st.sidebar.slider('Extra Source 1 (USD)', 10,20,15)
-        flipper_length_mm = st.sidebar.slider('Extra Source 1 (USD)', 150,250,200)
+        flipper_length_mm = st.sidebar.slider('Extra Source 2 (USD)', 150,250,200)
         body_mass_g = 4207.0
         data = {'island': island,
                 'bill_length_mm': bill_length_mm,
@@ -54,15 +50,6 @@ for col in encode:
     df = pd.concat([df,dummy], axis=1)
     del df[col]
 df = df[:1] # Selects only the first row (the user input data)
-
-# Displays the user input features
-st.subheader('User Input features')
-
-if uploaded_file is not None:
-    st.write(df)
-else:
-    st.write('Awaiting CSV file to be uploaded. Currently using example input parameters (shown below).')
-    st.write(df)
 
 # Reads in saved classification model
 load_clf = pickle.load(open('penguins_clf.pkl', 'rb'))
