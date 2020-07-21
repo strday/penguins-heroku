@@ -28,9 +28,11 @@ else:
         bill_length_mm = st.sidebar.slider('Payment Rate (USD)', 30,60,40)
         bill_depth_mm = st.sidebar.slider('Extra Source 1 (USD)', 10,20,15)
         flipper_length_mm = st.sidebar.slider('Extra Source 1 (USD)', 150,250,200)
-        data = {'bill_length_mm': bill_length_mm,
+        data = {'island': island,
+                'bill_length_mm': bill_length_mm,
                 'bill_depth_mm': bill_depth_mm,
                 'flipper_length_mm': flipper_length_mm,
+                'body_mass_g': body_mass_g,
                 'sex': sex}
         features = pd.DataFrame(data, index=[0])
         return features
