@@ -5,10 +5,6 @@ import pickle
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
 import joblib
-import os
-import warnings
-warnings.filterwarnings('ignore')
-import matplotlib.pyplot as plt
 
 def user_input_features():
 		pr1 = st.sidebar.text_input('Payment Rate (USD)')
