@@ -1,67 +1,68 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import pickle
+import pickle 
+from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
+import joblib
+import os
+import warnings
+warnings.filterwarnings('ignore')
+import matplotlib.pyplot as plt
 
+def user_input_features():
+		pr1 = st.sidebar.text_input('Payment Rate (USD)')
+		pr2 = st.sidebar.slider('', 30,120,40)
+		e11 = st.sidebar.text_input('Extra Income #1 (USD)')
+		e12 = st.sidebar.slider('', 0,30,10)		
+		e21 = st.sidebar.text_input('Extra Income #2 (USD)')
+		e22 = st.sidebar.slider('', 0,30,5)		
+		e31 = st.sidebar.text_input('Extra Income #3 (USD)')
+		e32 = st.sidebar.slider('', 0,30,0)			
+		if pr1:
+			pr = pr1
+		else:			
+			pr = pr2		
+		if e11:
+			e1 = e11
+		else:			
+			e1 = e12		
+		if e21:
+			e2 = e21
+		else:			
+			e2 = e22		
+		if e31:
+			e3 = e31
+		else:			
+			e3 = e32
+		data = {'Payment Rate (USD)': pr,
+						'Extra Income #1 (USD)': e1,
+						'Extra Income #2 (USD)': e2,
+						'Extra Income #3 (USD)': e3}
+		features = pd.DataFrame(data, index=[0])
+		return features
+				
 st.write("""
-# Home Credit Risk Prediction App
+## Home Credit Default Risk App
 
-This app predicts Home Credit Risk!
-
-Data obtained from the [Kaggle] (https://www.kaggle.com/c/home-credit-default-risk/data).
+This app predicts the **Home Credit Default Risk**
 """)
 
-st.sidebar.header('User Input Features')
+st.sidebar.header('User Data')
+st.subheader('User Input Data')
 
-# Collects user input features into dataframe
-uploaded_file = st.sidebar.file_uploader("Upload your input CSV file", type=["csv"])
+uploaded_file = st.sidebar.file_uploader("", type=["csv"])
 if uploaded_file is not None:
     input_df = pd.read_csv(uploaded_file)
+    st.write(input_df)
 else:
-    def user_input_features():        
-        island = 'Biscoe'
-        sex = st.sidebar.selectbox('Sex',('male','female'))
-        bill_length_mm = st.sidebar.slider('Payment Rate (USD)', 30,60,40)
-        bill_depth_mm = st.sidebar.slider('Extra Source 1 (USD)', 10,20,15)
-        flipper_length_mm = st.sidebar.slider('Extra Source 2 (USD)', 150,250,200)
-        body_mass_g = 4207.0
-        data = {'island': island,
-                'bill_length_mm': bill_length_mm,
-                'bill_depth_mm': bill_depth_mm,
-                'flipper_length_mm': flipper_length_mm,
-                'body_mass_g': body_mass_g,
-                'sex': sex}
-        features = pd.DataFrame(data, index=[0])
-        return features
     input_df = user_input_features()
+    st.write(input_df)
 
-# Combines user input features with entire penguins dataset
-# This will be useful for the encoding phase
-penguins_raw = pd.read_csv('penguins_cleaned.csv')
-penguins = penguins_raw.drop(columns=['species'])
-df = pd.concat([input_df,penguins],axis=0)
-
-# Encoding of ordinal features
-# https://www.kaggle.com/pratik1120/penguin-dataset-eda-classification-and-clustering
-encode = ['sex','island']
-for col in encode:
-    dummy = pd.get_dummies(df[col], prefix=col)
-    df = pd.concat([df,dummy], axis=1)
-    del df[col]
-df = df[:1] # Selects only the first row (the user input data)
-
-# Reads in saved classification model
-load_clf = pickle.load(open('penguins_clf.pkl', 'rb'))
-
-# Apply model to make predictions
-prediction = load_clf.predict(df)
-prediction_proba = load_clf.predict_proba(df)
-
-
-st.subheader('Prediction')
-penguins_species = np.array(['REJECT','NOT SURE','ACCEPT'])
-st.write(penguins_species[prediction])
+rf = joblib.load("rf.sav")
+if input_df.size <= 25:	
+		input_df = pd.read_csv("rf0.csv")
+log_reg_pred2 = rf.predict_proba(input_df)
 
 st.subheader('Prediction Probability')
-st.write(prediction_proba)
+st.write(log_reg_pred2)
